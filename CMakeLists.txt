@@ -338,6 +338,7 @@ if(QV2RAY_HAS_BUILTIN_PLUGINS)
     include(src/plugins/protocols/QvPlugin-BuiltinProtocolSupport.cmake)
     include(src/plugins/subscription-adapters/QvPlugin-BuiltinSubscriptionAdapters.cmake)
     #include(src/plugins/utils/QvPlugin-BuiltinUtils.cmake)
+    include(src/plugins/protocol-trojan/QvPlugin-BuiltinTrojanSupport.cmake)
 endif()
 
 # ==================================================================================

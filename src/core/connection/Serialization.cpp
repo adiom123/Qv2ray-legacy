@@ -61,6 +61,12 @@ namespace Qv2ray::core::connection
                         connectionConf << std::pair{ _alias, root };
                     }
                 }
+                else if (link.startsWith("trojan://"))
+                {
+                    auto conf = trojan::Deserialize(link, aliasPrefix, errMessage);
+                    TLSOptionsFilter(conf);
+                    connectionConf << std::pair{ *aliasPrefix, conf };
+                }
                 else if (errMessage->isEmpty())
                 {
                     *errMessage = QObject::tr("Unsupported share link format.");

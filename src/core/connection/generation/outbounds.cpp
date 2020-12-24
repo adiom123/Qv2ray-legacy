@@ -31,10 +31,31 @@ namespace Qv2ray::core::connection::generation::outbounds
         return root;
     }
 
+    OUTBOUNDSETTING GenerateTrojanOUT(const QList<TrojanServerObject> &_servers)
+    {
+        OUTBOUNDSETTING root;
+        QJsonArray x;
+
+        for (const auto &server : _servers)
+        {
+            x.append(GenerateTrojanServerOUT(server.address, server.port, server.password));
+        }
+
+        root.insert("servers", x);
+        return root;
+    }
+
     OUTBOUNDSETTING GenerateShadowSocksServerOUT(const QString &address, int port, const QString &method, const QString &password)
     {
         OUTBOUNDSETTING root;
         JADD(address, port, method, password)
+        return root;
+    }
+
+    OUTBOUNDSETTING GenerateTrojanServerOUT(const QString &address, int port, const QString &password)
+    {
+        OUTBOUNDSETTING root;
+        JADD(address, port, password)
         return root;
     }
 

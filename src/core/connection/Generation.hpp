@@ -44,7 +44,9 @@ namespace Qv2ray::core::connection::generation
         OUTBOUNDSETTING GenerateFreedomOUT(const QString &domainStrategy, const QString &redirect);
         OUTBOUNDSETTING GenerateBlackHoleOUT(bool useHTTP);
         OUTBOUNDSETTING GenerateShadowSocksOUT(const QList<ShadowSocksServerObject> &servers);
+        OUTBOUNDSETTING GenerateTrojanOUT(const QList<TrojanServerObject> &servers);
         OUTBOUNDSETTING GenerateShadowSocksServerOUT(const QString &address, int port, const QString &method, const QString &password);
+        OUTBOUNDSETTING GenerateTrojanServerOUT(const QString &address, int port, const QString &password);
         OUTBOUNDSETTING GenerateHTTPSOCKSOut(const QString &address, int port, bool useAuth, const QString &username, const QString &password);
         OUTBOUND GenerateOutboundEntry(const QString &tag,                //
                                        const QString &protocol,           //

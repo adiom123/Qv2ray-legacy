@@ -45,6 +45,11 @@ namespace Qv2ray::core::connection::serialization
         QList<std::pair<QString, CONFIGROOT>> Deserialize(const QString &uri, QString *groupName, QStringList *logList);
     } // namespace ssd
 
+    namespace trojan
+    {
+        CONFIGROOT Deserialize(const QString &trojan, QString *alias, QString *errMessage);
+    } // namespace trojan
+
 } // namespace Qv2ray::core::connection::serialization
 
 using namespace Qv2ray::core;

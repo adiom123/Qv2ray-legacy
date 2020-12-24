@@ -116,7 +116,20 @@ void OutboundEditor::reloadGUI()
     outboundType = originalConfig["protocol"].toString("vmess");
     muxConfig = originalConfig.contains("mux") ? originalConfig["mux"].toObject() : QJsonObject{};
     useForwardProxy = originalConfig[QV2RAY_USE_FPROXY_KEY].toBool(false);
-    streamSettingsWidget->SetStreamObject(StreamSettingsObject::fromJson(originalConfig["streamSettings"].toObject()));
+
+    QJsonObject streamSettings = originalConfig["streamSettings"].toObject();
+    if (outboundType == "trojan")
+    {
+        const auto _settings = originalConfig["settings"].toObject();
+        const auto _servers = _settings["servers"].toArray();
+        if (_servers.size() == 0) // Trojan-GFW plugin config
+        {
+            QJsonObject tlsSettings = { {"serverName", _settings["sni"]} };
+            streamSettings = { {"security", QJsonValue("tls")}, {"tlsSettings", QJsonValue(tlsSettings)} };
+        }
+    }
+    streamSettingsWidget->SetStreamObject(StreamSettingsObject::fromJson(streamSettings));
+
     //
     useFPCB->setChecked(useForwardProxy);
     muxEnabledCB->setChecked(muxConfig["enabled"].toBool());
@@ -129,7 +142,14 @@ void OutboundEditor::reloadGUI()
     {
         if (protocol == outboundType)
         {
-            outBoundTypeCombo->setCurrentIndex(outBoundTypeCombo->findData(protocol));
+            const auto oldIndex = outBoundTypeCombo->currentIndex();
+            const auto index = outBoundTypeCombo->findData(protocol);
+            outBoundTypeCombo->setCurrentIndex(index);
+            if (index == oldIndex)
+            {
+                emit on_outBoundTypeCombo_currentIndexChanged(index); // emit even if it is not really changed
+            }
+
             widget->SetContent(settings);
             const auto &[_address, _port] = widget->GetHostAddress();
             serverAddress = _address;

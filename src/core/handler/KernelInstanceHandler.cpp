@@ -87,6 +87,35 @@ namespace Qv2ray::core::handler
         //    inboundInfo.push_back({ inbound["protocol"].toString(), inbound["port"].toInt(), inbound["tag"].toString() });
         //}
         //
+
+        // Trojan-GFW plugin compatibility
+        if (!kernelMap.contains("trojan"))
+        {
+            const auto cnt = fullConfig["outbounds"].toArray().count();
+            for (auto i = 0; i < cnt; i++)
+            {
+                auto outbound = QJsonIO::GetValue(fullConfig, "outbounds", i).toObject();
+                const auto outProtocol = outbound["protocol"].toString();
+                if (outProtocol == "trojan")
+                {
+                    auto settings = outbound["settings"].toObject();
+                    auto servers = settings["servers"];
+                    if (servers.isNull()) // Trojan-GFW plugin config
+                    {
+                        auto port = settings["port"].toInt();
+                        auto address = settings["address"].toString();
+                        auto password = settings["password"].toString();
+                        auto sni = settings["sni"].toString();
+                        QJsonIO::SetValue(fullConfig, port, "outbounds", i, "settings", "servers", 0, "port");
+                        QJsonIO::SetValue(fullConfig, address, "outbounds", i, "settings", "servers", 0, "address");
+                        QJsonIO::SetValue(fullConfig, password, "outbounds", i, "settings", "servers", 0, "password");
+                        QJsonIO::SetValue(fullConfig, "tls", "outbounds", i, "streamSettings", "security");
+                        QJsonIO::SetValue(fullConfig, sni, "outbounds", i, "streamSettings", "tlsSettings", "serverName");
+                    }
+                }
+            }
+        }
+
         if (GlobalConfig.pluginConfig.v2rayIntegration)
         {
             // Process outbounds.
